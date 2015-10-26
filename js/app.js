@@ -88,7 +88,7 @@ var closePopup = function() {
 
 var closeAndGotoLatest = function() {
 	closePopup();
-	selectLast();
+	selectFirst();
 	scrollToSelected();
 	clickSelected();
 };
@@ -224,7 +224,7 @@ App = {
 					$status.html($status.attr('original'));
 					$('#photos').fadeOut();
 					$('#photos img').remove();
-					$('#photo-strips').append($html).isotope('appended', $html, true);
+					$('#photo-strips').prepend($html).isotope('prepended', $html, true);
 					magnifyThem();
 					setTimeout(closeAndGotoLatest, 1000);
 				}, 3000);
@@ -275,7 +275,7 @@ App = {
 				case 40: // down
 					moveRight();
 					break;
-				case 13: // letter t
+				case 13: // enter key
 				case 84: // letter t
 					closePopup();
 					//scrollToTop();
