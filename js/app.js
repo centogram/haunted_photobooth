@@ -154,7 +154,7 @@ App = {
 		if (App.timer > 0) {
 			var seconds = 1;
 			seconds += App.timer;
-			$('#status').html("Get ready! I'm going to start <br/>in " + seconds + " Seconds");
+			$('#status').html("Get ready! I'm going to begin in " + seconds + " seconds");
 			doBeep();
 			setTimeout(function() {
 				App.timer = App.timer - 1;
@@ -183,12 +183,12 @@ App = {
 			} else {
 				var remaining = App.photos_to_take - current_photo;
 				if(remaining == 1){
-					$('#status').html("One more.<br/>&nbsp;");
+					$('#status').html("One more. ");
 				} else {
-					$('#status').html("Looking good. " + remaining + " to go<br/>&nbsp;");
+					$('#status').html("Looking good. " + remaining + " to go. ");
 				}
 				setTimeout(function(){
-					$('#status').html($('#status').html() + "in 3");
+					$('#status').html($('#status').html() + "In 3");
 					doBeep();
 					setTimeout(function(){
 						$('#status').html($('#status').html() + " 2");
