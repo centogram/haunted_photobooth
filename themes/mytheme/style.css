@@ -23,7 +23,7 @@ a:hover {
 }
 
 h2 {
-	font: normal 25pt Helvetica, serif;
+	font: normal 20pt Helvetica, serif;
 	text-shadow: 2px 2px 1px #000;
 }
 
@@ -55,9 +55,8 @@ h2#welcome {
 h2#status {
 	position: fixed;
 	color: #ff7e00;
-	text-align: right;
-	right: 15px;
-	bottom: 15px;
+	right: 0px;
+	bottom: 0px;
 	z-index: 1985;
 	background-color: #000;
 	border: 4px solid #ff7e00;
@@ -84,7 +83,7 @@ h2#status {
 }
 
 #wrapper {
-  width: 1550px;
+  width: 1050px;
 	margin: 0 auto;
 }
 
@@ -156,7 +155,7 @@ h2#status {
 	border: 10px solid #fff;
 	position: absolute;
 	left: 50%;
-	margin-left: -700px;
+	margin-left: -550px;
 	top: 140px;
 	box-shadow: 6px 6px 24px #000;
 }

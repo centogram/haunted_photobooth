@@ -144,6 +144,7 @@ App = {
 	countdown: function() {
 		App.in_progress = true;
 		$('#photos').fadeIn();
+		$('#my-camera').fadeIn();
 
 		if (App.timer == 3) {
 			$('#status').attr('original', $('#status').html());
@@ -177,6 +178,7 @@ App = {
 			$('#photos').append('<img src="' + data.photo_src + '" alt="" style="-webkit-transform:rotate(' + d + 'deg);-moz-transform:rotate(' + d + 'deg);" />');
 			doFlash();
 			if (current_photo == App.photos_to_take) {
+				$('#my-camera').fadeOut();
 				App.combine_and_finish();
 			} else {
 				var remaining = App.photos_to_take - current_photo;
@@ -303,6 +305,7 @@ App = {
 				return false;
 			});
 			Webcam.attach('#my-camera');
+			$('#my-camera').fadeOut();
 		});
 	}
 };
