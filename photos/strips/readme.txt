@@ -1,0 +1,1 @@
+combined strips without overlay here

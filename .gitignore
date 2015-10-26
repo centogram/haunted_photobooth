@@ -2,3 +2,5 @@
 *.tmproj
 photos/*.jpg
 photos/*.jpeg
+photos/*/*.jpg
+photos/*/*.jpeg

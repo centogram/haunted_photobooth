@@ -1,0 +1,1 @@
+modified photos with random ghost possibility go here
