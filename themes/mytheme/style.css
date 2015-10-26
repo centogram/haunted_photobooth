@@ -4,7 +4,11 @@ body {
 	background-color: #333;
 	margin: 0;
 	padding: 0;
-	background-image: url(images/skull-pile.jpg);
+	background: url(images/haunted_house.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 /*  overflow: hidden;*/
 }
 
@@ -59,16 +63,18 @@ h2#status {
 	border: 4px solid #ff7e00;
 	padding: 1em;
 	text-align: center;
+	box-shadow: 1px 1px 20px #000;
 }
 #my-camera {
 	width: 320px;
-	height: 180px;
+	height: 240px;
 	position: fixed;
 	top: 15px;
 	right: 15px;
 	background-color: #000;
 	border: 4px solid #ff7e00;
 	z-index: 1985;
+	box-shadow: 1px 1px 20px #000;
 }
 
 
@@ -137,7 +143,11 @@ h2#status {
 	position: fixed;
 	z-index: 1984;
 	background: #0b0b0b;
-	background-image: url(images/skull-pile.jpg);
+	background: url(images/haunted_house.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 	display: none;
 }
 

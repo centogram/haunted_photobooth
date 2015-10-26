@@ -48,21 +48,20 @@ var magnifyThem = function() {
 
 var scrollToSelected = function(strip) {
 	var top = $("#photo-strips a.selected").offset().top;
-	/*$('html,body').animate({
-		scrollTop: top
-	},100);*/
 	$(window).scrollTop(top);
-	//console.log("scrolling to " + top);
 };
 var scrollToTop = function(strip) {
-	/*	$('html,body').animate({
-			scrollTop: 0
-		},100);
-		*/
 	$(window).scrollTop(0);
-	//console.log("scrolling to top");
 };
 
+var clickTimeout = false;
+var doTheClick  = function(){
+	$("#photo-strips a.selected").click();
+}
+var clickSelected = function(){
+	clearTimeout(clickTimeout);
+	clickTimeout = setTimeout(doTheClick,500);
+}
 var anythingSelected = function() {
 	return $("#photo-strips a.selected").length ? true : false;
 }
@@ -91,7 +90,7 @@ var closeAndGotoLatest = function() {
 	closePopup();
 	selectLast();
 	scrollToSelected();
-	$("#photo-strips a.selected").click();
+	clickSelected();
 };
 
 var enlarge = function() {
@@ -108,13 +107,16 @@ var moveRight = function() {
 	if (anythingSelected()) {
 		if ($("#photo-strips a").last().hasClass("selected")) {
 			scrollToSelected();
+			clickSelected();
 		} else {
 			selectNext();
 			scrollToSelected();
+			clickSelected();
 		}
 	} else {
 		scrollToTop();
 		selectFirst();
+		clickSelected();
 	}
 }
 var moveLeft = function() {
@@ -125,6 +127,7 @@ var moveLeft = function() {
 		} else {
 			selectPrev();
 			scrollToSelected();
+			clickSelected();
 		}
 	} else {
 		scrollToTop();
@@ -140,6 +143,7 @@ App = {
 
 	countdown: function() {
 		App.in_progress = true;
+		$('#photos').fadeIn();
 
 		if (App.timer == 3) {
 			$('#status').attr('original', $('#status').html());
@@ -172,26 +176,28 @@ App = {
 			var d = Math.random() * 20 - 20;
 			$('#photos').append('<img src="' + data.photo_src + '" alt="" style="-webkit-transform:rotate(' + d + 'deg);-moz-transform:rotate(' + d + 'deg);" />');
 			doFlash();
-			$('#photos').fadeIn();
 			if (current_photo == App.photos_to_take) {
 				App.combine_and_finish();
 			} else {
 				var remaining = App.photos_to_take - current_photo;
-				$('#status').html('Keep smiling.<br/>' + remaining + " more to go!<br/> ");
+				if(remaining == 1){
+					$('#status').html("One more.<br/>&nbsp;");
+				} else {
+					$('#status').html("Looking good. " + remaining + " to go<br/>&nbsp;");
+				}
 				setTimeout(function(){
-					$('#status').html($('#status').html() + "3.");
+					$('#status').html($('#status').html() + "in 3");
 					doBeep();
 					setTimeout(function(){
-						$('#status').html($('#status').html() + "2.");
+						$('#status').html($('#status').html() + " 2");
 						doBeep();
 						setTimeout(function(){
-							$('#status').html($('#status').html() + "1.");
+							$('#status').html($('#status').html() + " 1");
 							doBeep();
 							App.take_photo((current_photo + 1));
 						}, 1000);
 					}, 1000);
 				}, 1000);
-
 			}
 		}, 'json');
 	},
@@ -269,6 +275,7 @@ App = {
 				case 40: // down
 					moveRight();
 					break;
+				case 13: // letter t
 				case 84: // letter t
 					closePopup();
 					//scrollToTop();
@@ -294,11 +301,6 @@ App = {
 				App.photos_to_take = 4;
 				App.countdown();
 				return false;
-			});
-			Webcam.set({
-				width: 320,
-				height: 180,
-				fps: 45
 			});
 			Webcam.attach('#my-camera');
 		});

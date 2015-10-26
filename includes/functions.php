@@ -89,6 +89,7 @@ function combine_and_finish($id) {
   }
   $combined_file = combine_photos($files);
   add_overlay(PHOTO_PATH . 'strips/' . basename($combined_file), PHOTO_PATH . 'stripsoverlay/' . basename($combined_file), "bottomright");
+  printPhoto($combined_file);
   echo json_encode(array(
     'photo_src' => PUBLIC_PHOTO_PATH . '/stripsoverlay/' . basename($combined_file) ,
   ));
@@ -155,7 +156,13 @@ function combine_photos($files) {
   $image_data = ob_get_contents();
   ob_end_clean();
   $time = date("y.m.d G.i.s");
-  $tmp_file = PHOTO_PATH . '/strips/' . $time . '.jpeg';
+  $tmp_file = PHOTO_PATH . 'strips/' . $time . '.jpeg';
   file_put_contents($tmp_file, $image_data);
   return $tmp_file;
+}
+
+function printPhoto($file) {
+  $cmd = PRINT_CMD . " '" . $file . "'";
+  $cmd_response = shell_exec($cmd);
+  error_log("PRINT COMMAND : " . $cmd . " RESPONSE : " . $cmd_response);
 }
