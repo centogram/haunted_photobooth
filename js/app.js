@@ -5,8 +5,23 @@ function getFormattedDate() {
 	return str;
 }
 
+var doBeep = function() {
+	var beep = document.createElement('audio');
+	beep.setAttribute('src', '/sounds/beep.mp3');
+	beep.setAttribute('autoplay', 'autoplay');
+	beep.play();
+}
+
 var doFlash = function() {
-	//
+	// not really necessary but may do this
+	$("#photos").addClass("flash");
+	var shutter = document.createElement('audio');
+	shutter.setAttribute('src', '/sounds/shutter.mp3');
+	shutter.setAttribute('autoplay', 'autoplay');
+	shutter.play();
+	setTimeout(function(){
+		$("#photos").removeClass("flash");
+	},100);
 }
 
 var magnifyThem = function() {
@@ -67,10 +82,15 @@ var selectPrev = function() {
 	$("#photo-strips a.selected").removeClass('selected').prev().addClass("selected");
 }
 
-var closeAndGotoLatest = function() {
+var closePopup = function() {
 	var magnificPopup = $.magnificPopup.instance;
 	magnificPopup.close();
+}
+
+var closeAndGotoLatest = function() {
+	closePopup();
 	selectLast();
+	scrollToSelected();
 	$("#photo-strips a.selected").click();
 };
 
@@ -79,12 +99,12 @@ var enlarge = function() {
 	if (!$.magnificPopup.instance.isOpen) {
 		$("#photo-strips a.selected").click();
 	} else {
-		var magnificPopup = $.magnificPopup.instance;
-		magnificPopup.close();
+		closePopup();
 	}
 };
 
 var moveRight = function() {
+	closePopup();
 	if (anythingSelected()) {
 		if ($("#photo-strips a").last().hasClass("selected")) {
 			scrollToSelected();
@@ -98,6 +118,7 @@ var moveRight = function() {
 	}
 }
 var moveLeft = function() {
+	closePopup();
 	if (anythingSelected()) {
 		if ($("#photo-strips a").first().hasClass("selected")) {
 			scrollToTop();
@@ -126,12 +147,16 @@ App = {
 		}
 
 		if (App.timer > 0) {
-			$('#status').html("Get ready! I'm going to start <br/>in " + App.timer + " Seconds");
+			var seconds = 1;
+			seconds += App.timer;
+			$('#status').html("Get ready! I'm going to start <br/>in " + seconds + " Seconds");
+			doBeep();
 			setTimeout(function() {
 				App.timer = App.timer - 1;
 				App.countdown();
 			}, 1000);
 		} else {
+			doBeep();
 			$('#status').text('Ok, Say "cheese"!');
 			App.take_photo(1);
 			App.timer = 3;
@@ -143,26 +168,36 @@ App = {
 		if (current_photo == 1) {
 			App.photo_id = getFormattedDate();
 		}
-		doFlash();
-
 		$.get('index.php?action=take_photo&id=' + App.photo_id + '&photos_to_take=' + App.photos_to_take, function(data) {
 			var d = Math.random() * 20 - 20;
 			$('#photos').append('<img src="' + data.photo_src + '" alt="" style="-webkit-transform:rotate(' + d + 'deg);-moz-transform:rotate(' + d + 'deg);" />');
+			doFlash();
+			$('#photos').fadeIn();
 			if (current_photo == App.photos_to_take) {
 				App.combine_and_finish();
 			} else {
 				var remaining = App.photos_to_take - current_photo;
-				$('#status').text('Keep smiling. ' + remaining + " more to go!");
-				setTimeout(function() {
-					App.take_photo((current_photo + 1));
-				}, 3500);
+				$('#status').html('Keep smiling.<br/>' + remaining + " more to go!<br/> ");
+				setTimeout(function(){
+					$('#status').html($('#status').html() + "3.");
+					doBeep();
+					setTimeout(function(){
+						$('#status').html($('#status').html() + "2.");
+						doBeep();
+						setTimeout(function(){
+							$('#status').html($('#status').html() + "1.");
+							doBeep();
+							App.take_photo((current_photo + 1));
+						}, 1000);
+					}, 1000);
+				}, 1000);
 
 			}
 		}, 'json');
 	},
 
 	combine_and_finish: function() {
-		$('#status').text("You were awesome. Now give me a sec to prep them...");
+		$('#status').text("Awesome! Now just a sec...");
 
 		setTimeout(function() {
 			$.get('index.php?action=combine_and_finish&id=' + App.photo_id, function(data) {
@@ -181,6 +216,7 @@ App = {
 					App.in_progress = false;
 					var $status = $('#status');
 					$status.html($status.attr('original'));
+					$('#photos').fadeOut();
 					$('#photos img').remove();
 					$('#photo-strips').append($html).isotope('appended', $html, true);
 					magnifyThem();
@@ -215,11 +251,10 @@ App = {
 
 		$(window).keydown(function(e) {
 			if (App.in_progress) return;
-
 			var photo_count = 0;
-
 			switch (e.which) {
-				case 69:
+				// Map the griffin powermate button to all of these keys for the browser
+				case 69: // letter e
 					enlarge();
 					break;
 				case 37: // left
@@ -234,17 +269,14 @@ App = {
 				case 40: // down
 					moveRight();
 					break;
-				case 84:
-					var magnificPopup = $.magnificPopup.instance;
-					magnificPopup.close();
+				case 84: // letter t
+					closePopup();
 					//scrollToTop();
 					photo_count = 4;
 					break;
 				default:
 					console.log(e.keyCode);
-
 			}
-
 			// the numbers 1-9 = keyCodes 49-57
 			if (photo_count > 0) {
 				App.photos_to_take = photo_count;
@@ -264,10 +296,10 @@ App = {
 				return false;
 			});
 			Webcam.set({
-        width: 320,
-        height: 180,
-        fps: 45
-    	});
+				width: 320,
+				height: 180,
+				fps: 45
+			});
 			Webcam.attach('#my-camera');
 		});
 	}

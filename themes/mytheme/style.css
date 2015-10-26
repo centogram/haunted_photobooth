@@ -19,7 +19,7 @@ a:hover {
 }
 
 h2 {
-	font: normal 25pt westsac, serif;
+	font: normal 25pt Helvetica, serif;
 	text-shadow: 2px 2px 1px #000;
 }
 
@@ -126,15 +126,19 @@ h2#status {
 }
 
 .flash {
-	 background-color: #fff;
-   filter: alpha(opacity=75);
-   opacity: 0.5;
+	 background: #fff !important;
 }
 
 #photos {
 	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
 	position: fixed;
 	z-index: 1984;
+	background: #0b0b0b;
+	background-image: url(images/skull-pile.jpg);
+	display: none;
 }
 
 #photos img {
