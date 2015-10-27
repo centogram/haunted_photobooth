@@ -56,8 +56,10 @@ function add_footer($source_file_path, $output_file_path) {
   $image_height = $source_height + $footer_height;
 
   $image = imagecreatetruecolor($image_width, $image_height);
-  $white = imagecolorallocate($image, 255, 255, 255);
-  imagefilledrectangle($image, 0, 0, $image_width, $image_height, $white);
+
+  $background = imagecolorallocate($image, 255, 255, 255); // white
+  //$background = imagecolorallocate($image, 0, 0, 0); // black
+  imagefilledrectangle($image, 0, 0, $image_width, $image_height, $background);
 
 
   imagecopy($image,$source_gd_image,0,0,0,0,$source_width,$source_height);
@@ -156,8 +158,9 @@ function combine_photos($files) {
   $image_width = $resized_width + ($offset * 2);
   $image_height = (count($files) * ($resized_height + $offset)) + $offset;
   $image = imagecreatetruecolor($image_width, $image_height);
-  $white = imagecolorallocate($image, 255, 255, 255);
-  imagefilledrectangle($image, 0, 0, $image_width, $image_height, $white);
+  $background = imagecolorallocate($image, 255, 255, 255); // white
+  //$background = imagecolorallocate($image, 0, 0, 0); // black
+  imagefilledrectangle($image, 0, 0, $image_width, $image_height, $background);
   foreach($files as $i => $file_name) {
     $file = PHOTO_PATH . '/modified/' . $file_name;
     list($full_width, $full_height) = getimagesize($file);
@@ -179,5 +182,11 @@ function combine_photos($files) {
 function printPhoto($file) {
   $cmd = PRINT_CMD . " '" . $file . "'";
   $cmd_response = shell_exec($cmd);
-  error_log("PRINT COMMAND : " . $cmd . " RESPONSE : " . $cmd_response);
+}
+
+function print_strip($file) {
+  printPhoto(PHOTO_PATH . 'stripsfooter/' . basename($file));
+  echo json_encode(array(
+    'success' => true,
+  ));
 }

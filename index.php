@@ -12,6 +12,11 @@ switch ( $action ) {
     echo combine_and_finish($_GET['id']);
     exit;
 
+  case 'print_photo':
+    echo print_strip($_GET['filename']);
+    exit;
+
+
   default:
     $strips = array();
     $files = scandir(PHOTO_PATH . "/strips", 1);

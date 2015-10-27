@@ -19,9 +19,9 @@ var doFlash = function() {
 	shutter.setAttribute('src', '/sounds/shutter.mp3');
 	shutter.setAttribute('autoplay', 'autoplay');
 	shutter.play();
-	setTimeout(function(){
+	setTimeout(function() {
 		$("#photos").removeClass("flash");
-	},100);
+	}, 100);
 }
 
 var magnifyThem = function() {
@@ -55,12 +55,12 @@ var scrollToTop = function(strip) {
 };
 
 var clickTimeout = false;
-var doTheClick  = function(){
+var doTheClick = function() {
 	$("#photo-strips a.selected").click();
 }
-var clickSelected = function(){
+var clickSelected = function() {
 	clearTimeout(clickTimeout);
-	clickTimeout = setTimeout(doTheClick,500);
+	clickTimeout = setTimeout(doTheClick, 500);
 }
 var anythingSelected = function() {
 	return $("#photo-strips a.selected").length ? true : false;
@@ -80,6 +80,23 @@ var selectNext = function() {
 var selectPrev = function() {
 	$("#photo-strips a.selected").removeClass('selected').prev().addClass("selected");
 }
+var printSelected = function() {
+	$('#status').attr('original', $('#status').html());
+	App.in_progress = true;
+	$('#status').html("No problem.  I'll send that strip to the printer.");
+	setTimeout(function() {
+		var file = $("#photo-strips a.selected img").attr("src");
+		$.get('index.php?action=print_photo&filename=' + file, function(data) {
+			$('#status').html("Ok, you're all set.  Your photo should be printing.");
+			setTimeout(function() {
+				App.in_progress = false;
+				$('#status').html($('#status').attr('original'));
+			}, 2000);
+		});
+	}, 3000);
+
+}
+
 
 var closePopup = function() {
 	var magnificPopup = $.magnificPopup.instance;
@@ -182,18 +199,18 @@ App = {
 				App.combine_and_finish();
 			} else {
 				var remaining = App.photos_to_take - current_photo;
-				if(remaining == 1){
+				if (remaining == 1) {
 					$('#status').html("One more. ");
 				} else {
 					$('#status').html("Looking good. " + remaining + " to go. ");
 				}
-				setTimeout(function(){
+				setTimeout(function() {
 					$('#status').html($('#status').html() + "In 3");
 					doBeep();
-					setTimeout(function(){
+					setTimeout(function() {
 						$('#status').html($('#status').html() + " 2");
 						doBeep();
-						setTimeout(function(){
+						setTimeout(function() {
 							$('#status').html($('#status').html() + " 1");
 							doBeep();
 							App.take_photo((current_photo + 1));
@@ -276,6 +293,9 @@ App = {
 					break;
 				case 40: // down
 					moveRight();
+					break;
+				case 80: // down
+					printSelected();
 					break;
 				case 13: // enter key
 				case 84: // letter t
