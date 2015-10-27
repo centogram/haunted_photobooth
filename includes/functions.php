@@ -108,7 +108,7 @@ function combine_and_finish($id) {
   $combined_file = combine_photos($files);
   //add_overlay(PHOTO_PATH . 'strips/' . basename($combined_file), PHOTO_PATH . 'stripsoverlay/' . basename($combined_file), "topleft");
   add_footer(PHOTO_PATH . 'strips/' . basename($combined_file), PHOTO_PATH . 'stripsfooter/' . basename($combined_file));
-  printPhoto(PHOTO_PATH . 'stripsfooter/' . basename($combined_file));
+  printPhoto(basename($combined_file));
   echo json_encode(array(
     'photo_src' => PUBLIC_PHOTO_PATH . '/strips/' . basename($combined_file) ,
   ));
@@ -179,14 +179,35 @@ function combine_photos($files) {
   return $tmp_file;
 }
 
+function make_printer_friendly($source_file_path, $output_file_path) {
+  $shift_down = 110;
+  list($source_width, $source_height) = getimagesize($source_file_path);
+  $source_gd_image = imagecreatefromjpeg($source_file_path);
+  $image_width = $source_width;
+  $image_height = $source_height + $shift_down;
+  $image = imagecreatetruecolor($image_width, $image_height);
+  $background = imagecolorallocate($image, 255, 255, 255); // white
+  //$background = imagecolorallocate($image, 0, 0, 0); // black
+  imagefilledrectangle($image, 0, 0, $image_width, $image_height, $background);
+  imagecopy($image,$source_gd_image,0,$shift_down,0,0,$source_width,$source_height);
+
+  ob_start();
+  imagejpeg($image);
+  imagedestroy($image);
+  $image_data = ob_get_contents();
+  ob_end_clean();
+
+  file_put_contents($output_file_path, $image_data);
+}
+
 function printPhoto($file) {
-  $cmd = PRINT_CMD . " '" . $file . "'";
-  $cmd_response = shell_exec($cmd);
+  make_printer_friendly(PHOTO_PATH . 'stripsfooter/' . basename($file), PHOTO_PATH . 'printerfriendly/' . basename($file));
+  $cmd = PRINT_CMD . " '" . PHOTO_PATH . 'printerfriendly/' . basename($file) . "'";
+  return shell_exec($cmd);
 }
 
 function print_strip($file) {
-  printPhoto(PHOTO_PATH . 'stripsfooter/' . basename($file));
   echo json_encode(array(
-    'success' => true,
+    'success' => printPhoto($file),
   ));
 }
