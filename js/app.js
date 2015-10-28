@@ -13,7 +13,6 @@ var doBeep = function() {
 }
 
 var doFlash = function() {
-	// not really necessary but may do this
 	$("#photos").addClass("flash");
 	var shutter = document.createElement('audio');
 	shutter.setAttribute('src', '/sounds/shutter.mp3');
@@ -60,7 +59,7 @@ var doTheClick = function() {
 }
 var clickSelected = function() {
 	clearTimeout(clickTimeout);
-	clickTimeout = setTimeout(doTheClick, 500);
+	clickTimeout = setTimeout(doTheClick, 750);
 }
 var anythingSelected = function() {
 	return $("#photo-strips a.selected").length ? true : false;
@@ -83,9 +82,9 @@ var selectPrev = function() {
 var printSelected = function() {
 	$('#status').attr('original', $('#status').html());
 	App.in_progress = true;
-	$('#status').html("No problem.  I'll send that strip to the printer.");
+	$('#status').html("I'll send that strip to the printer. Give me a sec.");
+	var file = $("#photo-strips a.selected img").attr("src");
 	setTimeout(function() {
-		var file = $("#photo-strips a.selected img").attr("src");
 		$.get('index.php?action=print_photo&filename=' + file, function(data) {
 			$('#status').html("Ok, you're all set.  Your photo should be printing.");
 			setTimeout(function() {
@@ -93,7 +92,7 @@ var printSelected = function() {
 				$('#status').html($('#status').attr('original'));
 			}, 2000);
 		});
-	}, 3000);
+	}, 2000);
 
 }
 
@@ -111,7 +110,6 @@ var closeAndGotoLatest = function() {
 };
 
 var enlarge = function() {
-	console.log("enlarge");
 	if (!$.magnificPopup.instance.isOpen) {
 		$("#photo-strips a.selected").click();
 	} else {
