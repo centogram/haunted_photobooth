@@ -1,11 +1,4 @@
 <?php
-define('WATERMARK_OVERLAY_OPACITY', 100);
-define('WATERMARK_OUTPUT_QUALITY', 90);
-define('PHOTO_WIDTH', 1920);
-define('PHOTO_HEIGHT', 1080);
-define('STRIP_SPACING',60);
-
-
 function array_val($r, $key, $default = null) {
   return isset($r[$key]) ? $r[$key] : $default;
 }
@@ -35,7 +28,7 @@ function take_photo($id, $max_photos = null) {
     $odds = 20;
   }*/
 
-  $odds = 1;
+  $odds = GHOST_ODDS;
   copy(PHOTO_PATH . '/originals/' . $photo_file, PHOTO_PATH . '/modified/' . $photo_file);
   if (rand(1, $odds) == 1) {
     spookify(PHOTO_PATH . '/modified/' . $photo_file);
@@ -74,8 +67,8 @@ function add_footer($source_file_path, $output_file_path) {
   $image_width = $source_width;
   $image_height = $source_height + $footer_height;
   $image = imagecreatetruecolor($image_width, $image_height);
-    //$background = imagecolorallocate($image, 255, 255, 255); // white
-  $background = imagecolorallocate($image, 0, 0, 0); // black
+  $background = imagecolorallocate($image, 255, 255, 255); // white
+  //$background = imagecolorallocate($image, 0, 0, 0); // black
   imagefilledrectangle($image, 0, 0, $image_width, $image_height, $background);
   imagecopy($image,$source_gd_image,0,0,0,0,$source_width,$source_height);
 
@@ -144,21 +137,22 @@ function get_random_png($path){
 function combine_photos($files) {
   $resized_width = PHOTO_WIDTH;
   $resized_height = PHOTO_HEIGHT;
-  $offset = STRIP_SPACING;
-  $image_width = $resized_width + ($offset * 2);
-  $image_height = (count($files) * ($resized_height + $offset)) + $offset;
+  $offset_x = STRIP_SPACING_X;
+  $offset_y = STRIP_SPACING_Y;
+  $image_width = $resized_width + ($offset_x * 2);
+  $image_height = (count($files) * ($resized_height + $offset_y)) + $offset_y;
   $image = imagecreatetruecolor($image_width, $image_height);
 
-  //$background = imagecolorallocate($image, 255, 255, 255); // white
-  $background = imagecolorallocate($image, 0, 0, 0); // black
+  $background = imagecolorallocate($image, 255, 255, 255); // white
+  //$background = imagecolorallocate($image, 0, 0, 0); // black
 
   imagefilledrectangle($image, 0, 0, $image_width, $image_height, $background);
   foreach($files as $i => $file_name) {
     $file = PHOTO_PATH . '/modified/' . $file_name;
     list($full_width, $full_height) = getimagesize($file);
     $photo = imagecreatefromjpeg($file);
-    $dst_y = ($i * $resized_height) + (($i + 1) * $offset);
-    imagecopyresampled($image, $photo, $offset, $dst_y, 0, 0, $resized_width, $resized_height, $full_width, $full_height);
+    $dst_y = ($i * $resized_height) + (($i + 1) * $offset_y);
+    imagecopyresampled($image, $photo, $offset_x, $dst_y, 0, 0, $resized_width, $resized_height, $full_width, $full_height);
   }
   ob_start();
   imagejpeg($image);
@@ -172,16 +166,17 @@ function combine_photos($files) {
 }
 
 function make_printer_friendly($source_file_path, $output_file_path) {
-  $shift_down = 110;
+  $shift_down = PRINTER_SHIFT_Y;
+  $horizontal_padding = PRINTER_PAD_HORIZONTAL;
   list($source_width, $source_height) = getimagesize($source_file_path);
   $source_gd_image = imagecreatefromjpeg($source_file_path);
-  $image_width = $source_width;
+  $image_width = $source_width + (2*$horizontal_padding);
   $image_height = $source_height + $shift_down;
   $image = imagecreatetruecolor($image_width, $image_height);
-  //$background = imagecolorallocate($image, 255, 255, 255); // white
-  $background = imagecolorallocate($image, 0, 0, 0); // black
+  $background = imagecolorallocate($image, 255, 255, 255); // white
+  //$background = imagecolorallocate($image, 0, 0, 0); // black
   imagefilledrectangle($image, 0, 0, $image_width, $image_height, $background);
-  imagecopy($image,$source_gd_image,0,$shift_down,0,0,$source_width,$source_height);
+  imagecopy($image,$source_gd_image,$horizontal_padding,$shift_down,0,0,$source_width,$source_height);
   ob_start();
   imagejpeg($image);
   imagedestroy($image);
@@ -191,8 +186,8 @@ function make_printer_friendly($source_file_path, $output_file_path) {
 }
 
 function printPhoto($file) {
-  make_printer_friendly(PHOTO_PATH . 'stripsfooter/' . basename($file), PHOTO_PATH . 'printerfriendly/' . basename($file));
-  add_overlay(PHOTO_PATH . 'printerfriendly/' . basename($file), PHOTO_PATH . 'printerfriendly/' . basename($file), get_random_png(APP_ROOT . 'themes/' . THEME . '/printeroverlay/'), "topleft");
+  add_overlay(PHOTO_PATH . 'stripsfooter/' . basename($file), PHOTO_PATH . 'printerfriendly/' . basename($file), get_random_png(APP_ROOT . 'themes/' . THEME . '/printeroverlay/'), "topleft");
+make_printer_friendly(PHOTO_PATH . 'printerfriendly/' . basename($file), PHOTO_PATH . 'printerfriendly/' . basename($file));
 
   $cmd = PRINT_CMD . " '" . PHOTO_PATH . 'printerfriendly/' . basename($file) . "'";
 

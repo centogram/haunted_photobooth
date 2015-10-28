@@ -7,7 +7,7 @@ define('APP_ROOT', realpath(dirname(__FILE__)).'/');
 
 $config = parse_ini_file(APP_ROOT.'config.ini');
 foreach ( $config as $key => $val ) {
-  define(strtoupper($key), $val);
+  define(strtoupper($key), is_numeric($val) ? intval($val) : $val);
 }
 
 require APP_ROOT.'includes/functions.php';

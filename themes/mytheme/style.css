@@ -64,18 +64,16 @@ h2#status {
 	text-align: center;
 	box-shadow: 1px 1px 20px #000;
 	margin:0;
-	min-width: 40%;
+	width: 30%;
 }
 #my-camera {
-	width: 320px;
-	height: 240px;
+	width: 30%;
+	height: 40%;
 	position: fixed;
 	bottom: 15px;
 	left: 15px;
-	background-color: #000;
-	border: 4px solid #ff7e00;
+	background-color: "transparent";
 	z-index: 1985;
-	box-shadow: 1px 1px 20px #000;
 }
 
 
@@ -153,12 +151,13 @@ h2#status {
 }
 
 #photos img {
-	width: 1000px;
+	width: 75%;
+	height: auto;
 	border: 10px solid #fff;
 	position: absolute;
 	left: 50%;
-	margin-left: -500px;
-	top: 60px;
+	margin-left: -37.5%;
+	top: 10%;
 	box-shadow: 6px 6px 24px #000;
 }
 

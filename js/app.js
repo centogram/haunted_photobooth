@@ -1,7 +1,6 @@
 function getFormattedDate() {
 	var date = new Date();
 	var str = date.getFullYear() + "." + (date.getMonth() + 1) + "." + date.getDate() + "-" + date.getHours() + "." + date.getMinutes() + "." + date.getSeconds();
-
 	return str;
 }
 
@@ -45,14 +44,35 @@ var magnifyThem = function() {
 	});
 }
 
-var scrollToSelected = function(strip) {
+var scrollToSelected = function(animated) {
 	var top = $("#photo-strips a.selected").offset().top;
-	$(window).scrollTop(top);
+	if (animated) {
+		$('html, body').animate({
+			scrollTop: top
+		}, 500);
+	} else {
+		$(window).scrollTop(top);
+	}
+
 };
-var scrollToTop = function(strip) {
+var scrollToTop = function() {
 	$(window).scrollTop(0);
 };
 
+var selectRandom = function() {
+	if (App.in_progress) return;
+	var random = Math.floor(Math.random() * $("#photo-strips a").length);
+	closePopup();
+	$("#photo-strips a.selected").removeClass('selected');
+	$("#photo-strips a").eq(random).addClass("selected");
+	scrollToSelected(true);
+	clickSelected();
+}
+var randomInterval = false;
+var randomSelect = function() {
+	clearInterval(randomInterval);
+	randomInterval = setInterval(selectRandom, 20000);
+}
 var clickTimeout = false;
 var doTheClick = function() {
 	$("#photo-strips a.selected").click();
@@ -133,6 +153,7 @@ var moveRight = function() {
 		selectFirst();
 		clickSelected();
 	}
+	randomSelect();
 }
 var moveLeft = function() {
 	closePopup();
@@ -147,6 +168,7 @@ var moveLeft = function() {
 	} else {
 		scrollToTop();
 	}
+	randomSelect();
 }
 
 App = {
@@ -312,8 +334,6 @@ App = {
 			}
 		});
 
-
-
 		$(document).ready(function() {
 			// start taking photos when a number key is pressed
 			// take photo button
@@ -324,6 +344,7 @@ App = {
 			});
 			Webcam.attach('#my-camera');
 			$('#my-camera').fadeOut();
+			randomSelect();
 		});
 	}
 };
