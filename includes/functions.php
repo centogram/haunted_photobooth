@@ -19,16 +19,16 @@ function take_photo($id, $max_photos = null) {
   $cmd_response = shell_exec($cmd);
 
   // Make sure a ghost gets added to every strip
-  /*if (!$_SESSION['spookified_' . $id]) {
+  if (!$_SESSION['spookified_' . $id]) {
     $odds = 4 - $_SESSION['photo_number_' . $id];
     if ($max_photos == $_SESSION['photo_number_' . $id]) {
       $odds = 1;
     }
   } else {
-    $odds = 20;
-  }*/
+    $odds = GHOST_ODDS;
+  }
 
-  $odds = GHOST_ODDS;
+  //$odds = GHOST_ODDS;
   copy(PHOTO_PATH . '/originals/' . $photo_file, PHOTO_PATH . '/modified/' . $photo_file);
   if (rand(1, $odds) == 1) {
     spookify(PHOTO_PATH . '/modified/' . $photo_file);

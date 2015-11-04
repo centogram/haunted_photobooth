@@ -215,7 +215,7 @@ App = {
 			$('#photos').append('<img src="' + data.photo_src + '" alt="" style="-webkit-transform:rotate(' + d + 'deg);-moz-transform:rotate(' + d + 'deg);" />');
 			doFlash();
 			if (current_photo == App.photos_to_take) {
-				$('#my-camera').fadeOut();
+				//$('#my-camera').fadeOut();
 				App.combine_and_finish();
 			} else {
 				var remaining = App.photos_to_take - current_photo;
@@ -314,6 +314,9 @@ App = {
 				case 40: // down
 					moveRight();
 					break;
+				case 67: // c : show camera
+					$('#my-camera').fadeIn();
+					break;
 				case 80: // down
 					printSelected();
 					break;
@@ -343,7 +346,7 @@ App = {
 				return false;
 			});
 			Webcam.attach('#my-camera');
-			$('#my-camera').fadeOut();
+			//$('#my-camera').fadeOut();
 			randomSelect();
 		});
 	}
